@@ -1,0 +1,6 @@
+<====> input.eql
+lookup permalink.short
+<====> output.sql
+SELECT "be_eql_permalink"."short" FROM "be_eql_permalink";
+<====> skip.test
+true

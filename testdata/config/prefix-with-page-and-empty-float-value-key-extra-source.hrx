@@ -1,0 +1,13 @@
+<=====> config.json
+{"prefix":"be_eql","sources":[
+	{"name":"page","values":[
+		{"string":{"key":"shasum","size":10}},
+		{"string":{"key":"language","size":10}},
+		{"string":{"key":"type","size":48}},
+		{"string":{"key":"url","size":2000}},
+		{"string":{"key":"stub","size":-1}}
+	]},
+	{"name":"extra","parent":"page","values":[{"float":{"key":""}}]}
+]}
+<=====> error.txt
+invalid config: source value key is empty ("extra" value #1)

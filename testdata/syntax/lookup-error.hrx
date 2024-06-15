@@ -1,0 +1,4 @@
+<====> input.eql
+NOT LOOKUP .Shasum
+<=====> output.err
+enjinql:1:1: unexpected token "NOT"

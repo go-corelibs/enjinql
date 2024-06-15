@@ -1,0 +1,4 @@
+<====> input.eql
+LOOKUP .Shasum WITHIN .Url ^= {1}
+<====> output.eql
+LOOKUP .Shasum WITHIN .Url ^= {1}

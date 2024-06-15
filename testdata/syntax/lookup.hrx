@@ -1,0 +1,4 @@
+<====> input.eql
+lookup .Shasum ;
+<====> output.eql
+LOOKUP .Shasum;

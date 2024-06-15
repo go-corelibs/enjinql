@@ -1,0 +1,4 @@
+<====> input.eql
+lookup .Shasum within "en" == .Language
+<====> output.err
+enjinql:1:23: unexpected token "\"en\"" (expected "." <ident>)

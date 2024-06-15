@@ -1,0 +1,8 @@
+<====> input.eql
+LOOKUP page_title.Text WITHIN redirect.Url == "/pg-slg"
+<====> output.sql
+SELECT "be_eql_page_title"."text"
+FROM "be_eql_page"
+INNER JOIN "be_eql_page_title" ON "be_eql_page"."id"="be_eql_page_title"."page_id"
+INNER JOIN "be_eql_redirect" ON "be_eql_page"."id"="be_eql_redirect"."page_id"
+WHERE "be_eql_redirect"."url"=?;

@@ -1,0 +1,6 @@
+<====> input.eql
+LOOKUP DISTINCT .Shasum WITHIN .Language == "en"
+<====> output.sql
+SELECT DISTINCT("be_eql_page"."shasum")
+FROM "be_eql_page"
+WHERE "be_eql_page"."language"=?;

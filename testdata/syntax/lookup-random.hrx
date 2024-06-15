@@ -1,0 +1,4 @@
+<====> input.eql
+lookup .shasum order by random()
+<====> output.eql
+LOOKUP .shasum ORDER BY RANDOM()

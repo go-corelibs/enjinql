@@ -1,0 +1,9 @@
+<====> input.eql
+LOOKUP .Shasum WITHIN word_letters.Letter == "q"
+<====> output.sql
+SELECT "qf_eql_page"."shasum"
+FROM "qf_eql_page"
+INNER JOIN "qf_eql_page_words" ON "qf_eql_page"."id"="qf_eql_page_words"."page_id"
+INNER JOIN "qf_eql_word" ON "qf_eql_page_words"."word_id"="qf_eql_word"."id"
+INNER JOIN "qf_eql_word_letters" ON "qf_eql_word"."id"="qf_eql_word_letters"."word_id"
+WHERE "qf_eql_word_letters"."letter"=?;

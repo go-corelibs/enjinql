@@ -1,0 +1,111 @@
+<=====> batch.hrx
+<=====> lookup-op-ao.hrx
+<====> input.eql
+lookup .Shasum within .Url ~= "thing"
+<====> output.eql
+LOOKUP .Shasum WITHIN .Url ~= "thing"
+<=====> lookup-op-ao-not-b.hrx
+<====> input.eql
+lookup .Shasum within .Url !~= "thing"
+<====> output.eql
+LOOKUP .Shasum WITHIN .Url !~= "thing"
+<=====> lookup-op-ao-not.hrx
+<====> input.eql
+lookup .Shasum within .Url not ~= "thing"
+<====> output.eql
+LOOKUP .Shasum WITHIN .Url NOT ~= "thing"
+<=====> lookup-op-eq.hrx
+<====> input.eql
+LOOKUP .Shasum WITHIN .Language == "ja"
+<====> output.eql
+LOOKUP .Shasum WITHIN .Language == "ja"
+<=====> lookup-op-ew.hrx
+<====> input.eql
+LOOKUP .Shasum WITHIN .Url $= "/blog"
+<====> output.eql
+LOOKUP .Shasum WITHIN .Url $= "/blog"
+<=====> lookup-op-ew-not-b.hrx
+<====> input.eql
+LOOKUP .Shasum WITHIN .Url ! $= "/blog"
+<====> output.eql
+LOOKUP .Shasum WITHIN .Url !$= "/blog"
+<=====> lookup-op-ew-not.hrx
+<====> input.eql
+LOOKUP .Shasum WITHIN .Url not $= "/blog"
+<====> output.eql
+LOOKUP .Shasum WITHIN .Url NOT $= "/blog"
+<=====> lookup-op-ge.hrx
+<====> input.eql
+LOOKUP .Shasum WITHIN .ID >= 10
+<====> output.eql
+LOOKUP .Shasum WITHIN .ID >= 10
+<=====> lookup-op-gt.hrx
+<====> input.eql
+LOOKUP .Shasum WITHIN .ID > 10
+<====> output.eql
+LOOKUP .Shasum WITHIN .ID > 10
+<=====> lookup-op-le.hrx
+<====> input.eql
+LOOKUP .Shasum WITHIN .ID <= 10
+<====> output.eql
+LOOKUP .Shasum WITHIN .ID <= 10
+<=====> lookup-op-lk.hrx
+<====> input.eql
+LOOKUP .Shasum WITHIN .Url LIKE "%blog%"
+<====> output.eql
+LOOKUP .Shasum WITHIN .Url LIKE "%blog%"
+<=====> lookup-op-lk-not-b.hrx
+<====> input.eql
+LOOKUP .Shasum WITHIN .Url !LIKE "%blog%"
+<====> output.eql
+LOOKUP .Shasum WITHIN .Url !LIKE "%blog%"
+<=====> lookup-op-lk-not.hrx
+<====> input.eql
+LOOKUP .Shasum WITHIN .Url NOT LIKE "%blog%"
+<====> output.eql
+LOOKUP .Shasum WITHIN .Url NOT LIKE "%blog%"
+<=====> lookup-op-lt.hrx
+<====> input.eql
+LOOKUP .Shasum WITHIN .ID < 10
+<====> output.eql
+LOOKUP .Shasum WITHIN .ID < 10
+<=====> lookup-op-ne.hrx
+<====> input.eql
+LOOKUP .Shasum WITHIN .Language != "ja"
+<====> output.eql
+LOOKUP .Shasum WITHIN .Language != "ja"
+<=====> lookup-op-oo.hrx
+<====> input.eql
+lookup .Shasum within .Url *= "thing"
+<====> output.eql
+LOOKUP .Shasum WITHIN .Url *= "thing"
+<=====> lookup-op-oo-not-b.hrx
+<====> input.eql
+lookup .Shasum within .Url !*= "thing"
+<====> output.eql
+LOOKUP .Shasum WITHIN .Url !*= "thing"
+<=====> lookup-op-oo-not.hrx
+<====> input.eql
+lookup .Shasum within .Url not *= "thing"
+<====> output.eql
+LOOKUP .Shasum WITHIN .Url NOT *= "thing"
+<=====> lookup-op-sw.hrx
+<====> input.eql
+LOOKUP .Shasum WITHIN .Url ^= "/pages/"
+<====> output.eql
+LOOKUP .Shasum WITHIN .Url ^= "/pages/"
+<=====> lookup-op-sw-not-b.hrx
+<====> input.eql
+LOOKUP .Shasum WITHIN .Url ! ^= "/pages/"
+<====> output.eql
+LOOKUP .Shasum WITHIN .Url !^= "/pages/"
+<=====> lookup-op-sw-not.hrx
+<====> input.eql
+LOOKUP .Shasum WITHIN .Url not ^= "/pages/"
+<====> output.eql
+LOOKUP .Shasum WITHIN .Url NOT ^= "/pages/"
+<=====> condition-error-case-and.hrx
+<====> input.eql
+lookup .shasum, title.text within (redirect.url != "/") and (permalink.short != "derp")
+<====> output.eql
+LOOKUP .shasum, title.text WITHIN (redirect.url != "/") AND (permalink.short != "derp")

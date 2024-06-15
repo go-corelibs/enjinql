@@ -1,0 +1,4 @@
+<=====> config.json
+{"prefix":"be_eql"}
+<=====> error.txt
+invalid config: at least one source is required

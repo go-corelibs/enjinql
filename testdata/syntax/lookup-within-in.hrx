@@ -1,0 +1,4 @@
+<====> input.eql
+lookup .Shasum within .Language in ("en", "ja")
+<====> output.eql
+LOOKUP .Shasum WITHIN .Language IN ("en", "ja")

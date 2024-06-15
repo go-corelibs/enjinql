@@ -1,0 +1,6 @@
+<=====> config.json
+{"prefix":"be_eql","sources":[
+	{"name":"page"}
+]}
+<=====> error.txt
+invalid config: at least one source value is required ("page")

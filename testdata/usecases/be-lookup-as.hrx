@@ -1,0 +1,4 @@
+<====> input.eql
+LOOKUP .Shasum AS hash WITHIN .Url ^= "/section/"
+<====> output.sql
+SELECT "be_eql_page"."shasum" AS "hash" FROM "be_eql_page" WHERE "be_eql_page"."url" LIKE ?;

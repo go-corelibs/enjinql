@@ -1,0 +1,7 @@
+<====> input.eql
+QUERY ORDER BY RANDOM() LIMIT 1
+<====> output.sql
+SELECT "be_eql_page"."stub"
+FROM "be_eql_page"
+ORDER BY RANDOM() ASC
+LIMIT ?;

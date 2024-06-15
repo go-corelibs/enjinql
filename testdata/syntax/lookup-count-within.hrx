@@ -1,0 +1,4 @@
+<====> input.eql
+lookup count .shasum within .url ^= "/section/"
+<====> output.eql
+LOOKUP COUNT .shasum WITHIN .url ^= "/section/"

@@ -1,0 +1,4 @@
+<=====> config.json
+{"prefix":"BeEql"}
+<=====> error.txt
+invalid config: all names and keys must be snake_cased ("BeEql" is not "be_eql")

@@ -1,0 +1,4 @@
+<====> input.eql
+QUERY WITHIN (.Language == "en") AND ((.Url ^= "/blocks/") OR (.Archetype == "blog")) ORDER BY .Title ASC
+<====> output.eql
+QUERY WITHIN (.Language == "en") AND ((.Url ^= "/blocks/") OR (.Archetype == "blog")) ORDER BY .Title ASC

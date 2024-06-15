@@ -1,0 +1,6 @@
+<====> input.eql
+LOOKUP COUNT .Shasum WITHIN .Language == "en"
+<====> output.sql
+SELECT COUNT("be_eql_page"."shasum")
+FROM "be_eql_page"
+WHERE "be_eql_page"."language"=?;

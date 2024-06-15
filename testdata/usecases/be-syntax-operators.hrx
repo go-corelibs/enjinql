@@ -1,0 +1,136 @@
+<==> batch.hrx
+<==========> op-eq.hrx
+<====> input.eql
+lookup .ID within .Language == "ja"
+<====> output.sql
+SELECT "be_eql_page"."id" FROM "be_eql_page" WHERE "be_eql_page"."language"=?;
+<==========> op-ne.hrx
+<====> input.eql
+lookup .ID within .Language != "ja"
+<====> output.sql
+SELECT "be_eql_page"."id" FROM "be_eql_page" WHERE "be_eql_page"."language"<>?;
+<==========> op-ge.hrx
+<====> input.eql
+lookup .ID within .ID >= 10
+<====> output.sql
+SELECT "be_eql_page"."id" FROM "be_eql_page" WHERE "be_eql_page"."id">=?;
+<==========> op-le.hrx
+<====> input.eql
+lookup .ID within .ID <= 10
+<====> output.sql
+SELECT "be_eql_page"."id" FROM "be_eql_page" WHERE "be_eql_page"."id"<=?;
+<==========> op-gt.hrx
+<====> input.eql
+lookup .ID within .ID > 10
+<====> output.sql
+SELECT "be_eql_page"."id" FROM "be_eql_page" WHERE "be_eql_page"."id">?;
+<==========> op-lt.hrx
+<====> input.eql
+lookup .ID within .ID < 10
+<====> output.sql
+SELECT "be_eql_page"."id" FROM "be_eql_page" WHERE "be_eql_page"."id"<?;
+<==========> op-lk.hrx
+<====> input.eql
+lookup .id within .Url like "%blog%";
+<====> output.sql
+SELECT "be_eql_page"."id" FROM "be_eql_page" WHERE "be_eql_page"."url" LIKE ?;
+<==========> op-lk-not.hrx
+<====> input.eql
+lookup .id within .Url not like "%blog%";
+<====> output.sql
+SELECT "be_eql_page"."id" FROM "be_eql_page" WHERE "be_eql_page"."url" NOT LIKE ?;
+<==========> op-lk-not-b.hrx
+<====> input.eql
+lookup .id within .Url !like "%blog%";
+<====> output.sql
+SELECT "be_eql_page"."id" FROM "be_eql_page" WHERE "be_eql_page"."url" NOT LIKE ?;
+<==========> op-sw.hrx
+<====> input.eql
+lookup .id within .Url ^= "/pages/";
+<====> output.sql
+SELECT "be_eql_page"."id" FROM "be_eql_page" WHERE "be_eql_page"."url" LIKE ?;
+<==========> op-sw-not.hrx
+<====> input.eql
+lookup .id within .Url not ^= "/pages/";
+<====> output.sql
+SELECT "be_eql_page"."id" FROM "be_eql_page" WHERE "be_eql_page"."url" NOT LIKE ?;
+<==========> op-sw-not-b.hrx
+<====> input.eql
+lookup .id within .Url ! ^= "/pages/";
+<====> output.sql
+SELECT "be_eql_page"."id" FROM "be_eql_page" WHERE "be_eql_page"."url" NOT LIKE ?;
+<==========> op-ew.hrx
+<====> input.eql
+lookup .id within .Url $= "/pages/";
+<====> output.sql
+SELECT "be_eql_page"."id" FROM "be_eql_page" WHERE "be_eql_page"."url" LIKE ?;
+<==========> op-ew-not.hrx
+<====> input.eql
+lookup .id within .Url not $= "/pages/";
+<====> output.sql
+SELECT "be_eql_page"."id" FROM "be_eql_page" WHERE "be_eql_page"."url" NOT LIKE ?;
+<==========> op-ew-not-b.hrx
+<====> input.eql
+lookup .id within .Url ! $= "/pages/";
+<====> output.sql
+SELECT "be_eql_page"."id" FROM "be_eql_page" WHERE "be_eql_page"."url" NOT LIKE ?;
+<==========> op-cs.hrx
+<====> input.eql
+lookup .id within .Url *= "page";
+<====> output.sql
+SELECT "be_eql_page"."id" FROM "be_eql_page" WHERE "be_eql_page"."url" LIKE ?;
+<==========> op-cs-not.hrx
+<====> input.eql
+lookup .id within .Url not *= "page";
+<====> output.sql
+SELECT "be_eql_page"."id" FROM "be_eql_page" WHERE "be_eql_page"."url" NOT LIKE ?;
+<==========> op-cs-not-b.hrx
+<====> input.eql
+lookup .id within .Url ! *= "page";
+<====> output.sql
+SELECT "be_eql_page"."id" FROM "be_eql_page" WHERE "be_eql_page"."url" NOT LIKE ?;
+<==========> op-cf.hrx
+<====> input.eql
+lookup .id within .Type ~= "page blog";
+<====> output.sql
+SELECT "be_eql_page"."id" FROM "be_eql_page" WHERE "be_eql_page"."type" LIKE ? OR "be_eql_page"."type" LIKE ?;
+<==========> op-cf-not.hrx
+<====> input.eql
+lookup .id within .Type not ~= "page blog";
+<====> output.sql
+SELECT "be_eql_page"."id" FROM "be_eql_page" WHERE "be_eql_page"."type" NOT LIKE ? OR "be_eql_page"."type" NOT LIKE ?;
+<==========> op-cf-not-b.hrx
+<====> input.eql
+lookup .id within .Type ! ~= "page blog";
+<====> output.sql
+SELECT "be_eql_page"."id" FROM "be_eql_page" WHERE "be_eql_page"."type" NOT LIKE ? OR "be_eql_page"."type" NOT LIKE ?;
+<==>
+// Operator represents a comparison operation
+//
+//	| Key |  Op  | Description              |
+//	+-----+------+--------------------------+
+//	| EQ  |  ==  | equal to                 |
+//	| NE  |  !=  | not equal to             |
+//	| GE  |  >=  | greater than or equal to |
+//	| LE  |  <=  | less than or equal to    |
+//	| GT  |  >   | greater than             |
+//	| LT  |  <   | less than                |
+//	| LK  | LIKE | like                     |
+//	| SW  |  ^=  | starts with              |
+//	| EW  |  $=  | ends with                |
+//	| CS  |  *=  | contains string          |
+//	| CF  |  ~=  | contains any of fields   |
+//
+// For LK, SW, EW, CS and CF, there is a NOT modifier:
+//
+//	| Key |  Op  | Description              |
+//	+-----+------+--------------------------+
+//	| Not |  NOT | long-form negate         |
+//	| Nt  |  !   | short-form negate        |
+//
+// Example NOT modifier usage:
+//
+//	| Example | Description         |
+//	+---------+---------------------+
+//	| NOT ^=  | does not start with |
+//	|   !$=   | does not end with   |

@@ -1,0 +1,20 @@
+<=====> config.json
+{"prefix":"be_eql","sources":[
+	{"name":"page","values":[
+		{"string":{"key":"shasum","size":10}},
+		{"string":{"key":"language","size":10}},
+		{"string":{"key":"type","size":48}},
+		{"string":{"key":"url","size":2000}},
+		{"string":{"key":"stub","size":-1}}
+	]},
+	{"name":"nope","parent":"Page","values":[
+		{"string":{"key":"title","size":1000}},
+		{"string":{"key":"description","size":1000}}
+	]},
+	{"name":"Extra","parent":"nope","values":[
+		{"string":{"key":"title","size":1000}},
+		{"string":{"key":"description","size":1000}}
+	]}
+]}
+<=====> error.txt
+invalid config: all names and keys must be snake_cased ("Page" is not "page")

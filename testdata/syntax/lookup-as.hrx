@@ -1,0 +1,4 @@
+<====> input.eql
+lookup .Shasum as hash;
+<====> output.eql
+LOOKUP .Shasum AS hash;
