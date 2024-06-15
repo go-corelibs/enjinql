@@ -2,24 +2,50 @@
 
 SHELL := /bin/bash
 
-CORELIB_NAME := $(shell basename "${CORELIB_PKG}")
+CORELIB_NAME := $(shell echo "${CORELIB_PKG}" | perl -pe 's!(?:github.com/)?go-corelibs/!!')
 
 VERSION_TAGS        += CORELIBS
 CORELIBS_MK_SUMMARY := Go-CoreLibs.mk
-CORELIBS_MK_VERSION := v0.1.18
+CORELIBS_MK_VERSION := v0.2.1
 
 GOPKG_KEYS          ?=
 GOPKG_AUTO_CORELIBS ?= true
 LOCAL_CORELIBS_PATH ?= ..
 
-CLEAN_FILES ?= coverage.{out,html} go_*.test
+DEFAULT_CLEAN_FILES ?= coverage.{out,html} go_*.test *.pprof *.test
+ifeq (${OVERRIDE_CLEAN_FILES},true)
+CLEAN_FILES ?= ${DEFAULT_CLEAN_FILES}
+else
+CLEAN_FILES += ${DEFAULT_CLEAN_FILES}
+endif
+CLEAN_FILES += ${BUILD_COMMANDS}
+
+BUILD_TAGS ?= all
+ifeq (${BUILD_TAGS},)
+_BUILD_TAGS :=
+else
+_BUILD_TAGS := -tags=$(shell echo "${BUILD_TAGS}" \
+	| perl -e '$$r="";while(<>){$$r.=$$_;};$$r=~s!\s+!,!msg;$$r=~s!(^,|,$$)!!g;$$_="";print $$r;' \
+)
+endif
+
+check:
+	@echo "${_BUILD_TAGS}"
 
 GOTESTS_SKIP ?=
 _GOTEST_SKIP := $(shell \
 	echo "${GOTESTS_SKIP}" \
 		| perl -e '@s=();while(<>){s/^\s*(.+?)\s*$$/$$1/;chomp;push(@s,$$_);};print join("/",@s);' \
 )
-GOTESTS_ARGV ?= ./...
+GOTESTS_ARGV ?= .
+GOTESTS_TAGS ?= all
+
+_GOTEST_OPTS := -v -race -failfast
+_GOTEST_TAGS := $(shell \
+	echo "${GOTESTS_TAGS}" \
+		| perl -pe 's/^\s+//ms;s/\s+$$//ms;s/\s+/\n/msg;' \
+		| perl -pe 's/\n/,/' \
+)
 
 COVER_PROFILE ?= coverage.out
 COVER_MODE    ?= atomic
@@ -29,6 +55,7 @@ CONVEY_HOST    ?= 0.0.0.0
 CONVEY_PORT    ?= 8080
 CONVEY_POLL    ?= 500ms
 CONVEY_DEPTH   ?= -1
+CONVEY_TIMEOUT ?= 1s
 CONVEY_BROWSER ?= false
 CONVEY_EXCLUDE ?=
 _CONVEY_EXCLUDED := $(shell \
@@ -36,11 +63,27 @@ _CONVEY_EXCLUDED := $(shell \
 		| perl -e '@s=();while(<>){s/^\s*(.+?)\s*$$/$$1/;chomp;push(@s,$$_);};print join(",",@s);' \
 )
 
+PPROF_PORT  ?= 8081
+PPROF_CPU   ?= cpu.pprof
+PPROF_MEM   ?= mem.pprof
+
+BENCH       ?= ^Benchmark
+BENCH_COUNT ?= 1
+BENCH_CPU   ?= 1
+BENCH_CMD   ?= go test -run='^$$' -bench='${BENCH}' -count=${BENCH_COUNT} -cpu=${BENCH_CPU}
+
+DEPS += github.com/smartystreets/goconvey
+DEPS += golang.org/x/vuln/cmd/govulncheck
+DEPS += github.com/fzipp/gocyclo/cmd/gocyclo
+DEPS += github.com/gordonklaus/ineffassign
+DEPS += github.com/client9/misspell/cmd/misspell
+
 .PHONY: help version
 .PHONY: local unlocal be-update tidy
 .PHONE: corelibs packages
 .PHONY: deps build clean fmt
 .PHONY: test coverage goconvey reportcard
+.PHONE: bench bench.mem bench.cpu
 
 #
 #: Custom functions
@@ -79,6 +122,22 @@ endef
 
 define __list_corelibs_latest
 $(call __list_corelibs,@latest)
+endef
+
+define __go_test
+$(shell \
+	if [ -n "${_GOTEST_SKIP}" ]; then \
+		if [ -n "${_GOTEST_TAGS}" ]; then \
+			echo "${CMD} go test ${_GOTEST_OPTS} -timeout ${CONVEY_TIMEOUT} -tags \"${_GOTEST_TAGS}\" -skip \"${_GOTEST_SKIP}\""; \
+		else \
+			echo "${CMD} go test ${_GOTEST_OPTS} -timeout ${CONVEY_TIMEOUT} -skip \"${_GOTEST_SKIP}\""; \
+		fi; \
+	elif [ -n "${_GOTEST_TAGS}" ]; then \
+		echo "${CMD} go test ${_GOTEST_OPTS} -timeout ${CONVEY_TIMEOUT} -tags \"${_GOTEST_TAGS}\""; \
+	else \
+		echo "${CMD} go test ${_GOTEST_OPTS} -timeout ${CONVEY_TIMEOUT}"; \
+	fi \
+)
 endef
 
 #
@@ -164,7 +223,7 @@ local: export FOUND_LIBS=$(call __list_corelibs)
 local:
 	@if [ -n "$${FOUND_PKGS}" -o -n "$${FOUND_LIBS}" ]; then \
 		for found in $${FOUND_LIBS}; do \
-			name=`basename $${found}`; \
+			name=`echo "$${found}" | perl -pe "s~^github.com/go-corelibs/~~;"`; \
 			echo "# go mod local go-corelibs/$${name}"; \
 			go mod edit -replace=$${found}=${LOCAL_CORELIBS_PATH}/$${name}; \
 		done; \
@@ -187,7 +246,7 @@ unlocal: export FOUND_LIBS=$(call __list_corelibs)
 unlocal:
 	@if [ -n "$${FOUND_PKGS}" -o -n "$${FOUND_LIBS}" ]; then \
 		for found in $${FOUND_LIBS}; do \
-			name=`basename $${found}`; \
+			name=`echo "$${found}" | perl -pe "s~^github.com/go-corelibs/~~;"`; \
 			echo "# go mod unlocal go-corelibs/$${name}"; \
 			go mod edit -dropreplace=$${found}; \
 		done; \
@@ -221,24 +280,29 @@ be-update:
 	fi
 
 tidy:
-	@go mod tidy
+	@${CMD} go mod tidy
 
 deps:
-	@echo "# go install goconvey"
-	@go install github.com/smartystreets/goconvey@latest
-	@echo "# go install govulncheck"
-	@go install golang.org/x/vuln/cmd/govulncheck@latest
-	@echo "# go install gocyclo"
-	@go install github.com/fzipp/gocyclo/cmd/gocyclo@latest
-	@echo "# go install ineffassign"
-	@go install github.com/gordonklaus/ineffassign@latest
-	@echo "# go install misspell"
-	@go install github.com/client9/misspell/cmd/misspell@latest
+	@for REPO in ${DEPS}; do \
+		echo "# go install $${REPO}"; \
+		${CMD} go install "$${REPO}@latest"; \
+	done
 	@echo "# go get ./..."
-	@go get ./...
+	@${CMD} go get ./...
 
 build:
-	@go build -v ./...
+	@if [ -n "${BUILD_COMMANDS}" ]; then \
+		for NAME in ${BUILD_COMMANDS}; do \
+			if [ -d "./cmd/$${NAME}" ]; then \
+				${CMD} go build -v -o "$${NAME}" ${_BUILD_TAGS} "./cmd/$${NAME}"; \
+			else \
+				echo "# package not found: ./cmd/$${NAME}"; \
+				false; \
+			fi; \
+		done; \
+	else \
+		${CMD} go build -v ${_BUILD_TAGS} ./...; \
+	fi
 
 clean:
 	@if [ -n "${CLEAN_FILES}" ]; then rm -fv ${CLEAN_FILES}; fi
@@ -252,38 +316,23 @@ fmt:
 		`find * -name "*.go"`
 
 test:
-	@if [ -n "${_GOTEST_SKIP}" ]; then \
-		${CMD} go test \
-			-race -v \
-			-skip "${_GOTEST_SKIP}" \
-			${GOTESTS_ARGV}; \
-	else \
-		${CMD} go test -race -v ${GOTESTS_ARGV}; \
-	fi
+	@${CMD} $(call __go_test) ${GOTESTS_ARGV}
 
 coverage:
-	@if [ -n "${_GOTEST_SKIP}" ]; then \
-		${CMD} go test -race -v \
-			-skip "${_GOTEST_SKIP}" \
-			-coverprofile=${COVER_PROFILE} \
-			-covermode=${COVER_MODE} \
-			-coverpkg="${COVER_PKG}" \
-			-v ${GOTESTS_ARGV}; \
-	else \
-		${CMD} go test -race -v \
-			-coverprofile=${COVER_PROFILE} \
-			-covermode=${COVER_MODE} \
-			-coverpkg="${COVER_PKG}" \
-			${GOTESTS_ARGV}; \
-	fi
-	@go tool cover -html=${COVER_PROFILE} -o=coverage.html
-	@go tool cover -func=${COVER_PROFILE}
+	@${CMD} $(call __go_test) \
+		-coverprofile=${COVER_PROFILE} \
+		-covermode=${COVER_MODE} \
+		-coverpkg="${COVER_PKG}" \
+		-v ${GOTESTS_ARGV}
+	@${CMD} go tool cover -html=${COVER_PROFILE} -o=coverage.html
+	@${CMD} go tool cover -func=${COVER_PROFILE}
 
 goconvey:
 	@echo "# running goconvey (${CONVEY_HOST}:${CONVEY_PORT};@${CONVEY_POLL})"
 	@echo "# (press <CTRL+c> to stop)"
 	@if [ -n "${_CONVEY_EXCLUDED}" ]; then \
 		${CMD} goconvey \
+			-timeout=${CONVEY_TIMEOUT} \
 			-host=${CONVEY_HOST} \
 			-port=${CONVEY_PORT} \
 			-poll=${CONVEY_POLL} \
@@ -292,6 +341,7 @@ goconvey:
 			-excludedDirs=${_CONVEY_EXCLUDED}; \
 	else \
 		${CMD} goconvey \
+			-timeout=${CONVEY_TIMEOUT} \
 			-host=${CONVEY_HOST} \
 			-port=${CONVEY_PORT} \
 			-poll=${CONVEY_POLL} \
@@ -302,13 +352,13 @@ goconvey:
 reportcard:
 	@echo "# code sanity and style report"
 	@echo "#: go vet"
-	@go vet ./...
+	@${CMD} go vet ./...
 	@echo "#: gocyclo"
-	@gocyclo -over 15 `find * -name "*.go"` || true
+	@${CMD} gocyclo -over 15 `find * -name "*.go"` || true
 	@echo "#: ineffassign"
-	@ineffassign ./...
+	@${CMD} ineffassign ./...
 	@echo "#: misspell"
-	@misspell ./...
+	@${CMD} misspell ./...
 	@echo "#: gofmt -s"
 	@echo -e -n `find * -name "*.go" | while read SRC; do \
 		gofmt -s "$${SRC}" > "$${SRC}.fmts"; \
@@ -324,3 +374,33 @@ reportcard:
 		| while read LINE; do \
 			echo "$${LINE}\n"; \
 		done`
+
+bench:
+	@echo "# ${BENCH_CMD}" 1>&2
+	@${CMD} ${BENCH_CMD}
+
+bench.cpu:
+	@echo "# ${BENCH_CMD} -cpuprofile ${PPROF_CPU}" 1>&2
+	@if [ -f "${PPROF_CPU}" ]; then rm -fv "${PPROF_CPU}" || true; fi
+	@${CMD} ${BENCH_CMD} -cpuprofile "${PPROF_CPU}"; \
+		if [ -f "${PPROF_CPU}" ]; then \
+			read -n 1 -p "# press <Enter> to start pprof on :${PPROF_PORT} " JUNK; \
+			echo "# starting go tool ${PPROF_CPU} http://localhost:${PPROF_PORT}/"; \
+			echo "# press <CTRL+c> to stop"; \
+			go tool pprof -http=:${PPROF_PORT} "${PPROF_CPU}" 2> /dev/null; \
+		else \
+			echo "# ${PPROF_CPU} not found"; \
+		fi
+
+bench.mem:
+	@echo "# ${BENCH_CMD} -memprofile ${PPROF_MEM}" 1>&2
+	@if [ -f "${PPROF_MEM}" ]; then rm -fv "${PPROF_MEM}" || true; fi
+	@${CMD} ${BENCH_CMD} -memprofile "${PPROF_MEM}"; \
+		if [ -f "${PPROF_MEM}" ]; then \
+			read -n 1 -p "# press <Enter> to start pprof on :${PPROF_PORT} " JUNK; \
+			echo "# starting go tool ${PPROF_MEM} http://localhost:${PPROF_PORT}/"; \
+			echo "# press <CTRL+c> to stop"; \
+			go tool pprof -http=:${PPROF_PORT} "${PPROF_MEM}" 2> /dev/null; \
+		else \
+			echo "# ${PPROF_MEM} not found"; \
+		fi
