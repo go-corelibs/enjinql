@@ -96,9 +96,9 @@
 // ## Statistics
 //
 //   - 482,673 quotes
-//   - 23,727 authors
-//   - 11,981 topics
-//   - 91,489 words
+//   - 23,731 authors
+//   - 11,980 topics
+//   - 98,879 words
 //
 // ## EnjinQL Setup
 //
