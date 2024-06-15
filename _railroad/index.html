@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<style>
+body {
+	background-color: hsl(30,20%, 95%);
+}
+h1 {
+	font-family: sans-serif;
+	font-size: 1em;
+}
+</style>
+<!-- From https://github.com/tabatkins/railroad-diagrams -->
+<link rel='stylesheet' href='./railroad-diagrams.css'>
+<script src='./railroad-diagrams.js'></script>
+<body>
+<h1 id="Syntax">Syntax</h1>
+<script>
+Diagram(Choice(0, Sequence(Choice(0, Sequence(Choice(0, Sequence(Terminal("LOOKUP"), Optional(Terminal("COUNT")), Optional(Terminal("DISTINCT")), NonTerminal("SourceKey", {href:"#SourceKey"}), ZeroOrMore(Choice(0, Sequence(Terminal(","), NonTerminal("SourceKey", {href:"#SourceKey"}))))))), Sequence(Terminal("QUERY"))), Optional(Choice(0, Sequence(Terminal("WITHIN"), NonTerminal("Expression", {href:"#Expression"})))), Optional(NonTerminal("OrderBy", {href:"#OrderBy"})), Optional(Choice(0, Sequence(Terminal("OFFSET"), NonTerminal("int")))), Optional(Choice(0, Sequence(Terminal("LIMIT"), NonTerminal("int")))), Optional(Terminal(";"))))).addTo();
+</script>
+
+<h1 id="SourceKey">SourceKey</h1>
+<script>
+Diagram(Choice(0, Sequence(Optional(Choice(0, Sequence(NonTerminal("ident"), Group(Choice(0, Sequence(Terminal("."))), "?=")))), Terminal("."), NonTerminal("ident"), Optional(Choice(0, Sequence(Terminal("AS"), NonTerminal("ident"))))))).addTo();
+</script>
+
+<h1 id="Expression">Expression</h1>
+<script>
+Diagram(Choice(0, Sequence(NonTerminal("Constraint", {href:"#Constraint"})), Sequence(NonTerminal("Condition", {href:"#Condition"})))).addTo();
+</script>
+
+<h1 id="Constraint">Constraint</h1>
+<script>
+Diagram(Choice(0, Sequence(NonTerminal("SourceRef", {href:"#SourceRef"}), Choice(0, Sequence(Choice(0, Sequence(NonTerminal("Operator", {href:"#Operator"}), NonTerminal("Value", {href:"#Value"})))), Sequence(Choice(0, Sequence(Optional(Terminal("NOT")), Terminal("IN"), Terminal("("), NonTerminal("Value", {href:"#Value"}), ZeroOrMore(Choice(0, Sequence(Terminal(","), NonTerminal("Value", {href:"#Value"})))), Terminal(")")))))))).addTo();
+</script>
+
+<h1 id="SourceRef">SourceRef</h1>
+<script>
+Diagram(Choice(0, Sequence(Choice(0, Sequence(Optional(Choice(0, Sequence(NonTerminal("ident"), Group(Choice(0, Sequence(Terminal("."))), "?=")))), Terminal("."), NonTerminal("ident")))), Sequence(NonTerminal("ident")))).addTo();
+</script>
+
+<h1 id="Operator">Operator</h1>
+<script>
+Diagram(Choice(0, Sequence(Choice(0, Sequence(Terminal("==")), Sequence(Choice(0, Sequence(Terminal("!=")), Sequence(Terminal("<>")))), Sequence(Terminal(">=")), Sequence(Terminal("<=")), Sequence(Terminal(">")), Sequence(Terminal("<")))), Sequence(Choice(0, Sequence(Optional(Choice(0, Sequence(Terminal("NOT")), Sequence(Terminal("!")))), Choice(0, Sequence(Terminal("LIKE")), Sequence(Terminal("^=")), Sequence(Terminal("$=")), Sequence(Terminal("*=")), Sequence(Terminal("~=")))))))).addTo();
+</script>
+
+<h1 id="Value">Value</h1>
+<script>
+Diagram(Choice(0, Sequence(NonTerminal("string")), Sequence(NonTerminal("int")), Sequence(NonTerminal("float")), Sequence(Choice(0, Sequence(Terminal("TRUE")), Sequence(Terminal("FALSE")))), Sequence(Choice(0, Sequence(Terminal("NIL")), Sequence(Terminal("NULL")))), Sequence(NonTerminal("SourceRef", {href:"#SourceRef"})), Sequence(NonTerminal("placeholder")))).addTo();
+</script>
+
+<h1 id="Condition">Condition</h1>
+<script>
+Diagram(Choice(0, Sequence(Terminal("("), NonTerminal("Expression", {href:"#Expression"}), Terminal(")"), Choice(0, Sequence(Terminal("AND")), Sequence(Terminal("OR"))), Terminal("("), NonTerminal("Expression", {href:"#Expression"}), Terminal(")")))).addTo();
+</script>
+
+<h1 id="OrderBy">OrderBy</h1>
+<script>
+Diagram(Choice(0, Sequence(Terminal("ORDER"), Terminal("BY"), Choice(0, Sequence(Choice(0, Sequence(NonTerminal("SourceRef", {href:"#SourceRef"}), ZeroOrMore(Choice(0, Sequence(Terminal(","), NonTerminal("SourceRef", {href:"#SourceRef"}))))))), Sequence(Choice(0, Sequence(Terminal("RANDOM"), Terminal("("), Terminal(")"))))), Optional(Choice(0, Sequence(Terminal("ASC")), Sequence(Terminal("DSC")), Sequence(Terminal("DESC"))))))).addTo();
+</script>
+
+</body>
