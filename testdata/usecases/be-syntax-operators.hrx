@@ -1,12 +1,12 @@
 <==> batch.hrx
 <==========> op-eq.hrx
 <====> input.eql
-lookup .ID within .Language == "ja"
+lookup .ID within .Language == 'ja'
 <====> output.sql
 SELECT "be_eql_page"."id" FROM "be_eql_page" WHERE "be_eql_page"."language"=?;
 <==========> op-ne.hrx
 <====> input.eql
-lookup .ID within .Language != "ja"
+lookup .ID within .Language != `ja`
 <====> output.sql
 SELECT "be_eql_page"."id" FROM "be_eql_page" WHERE "be_eql_page"."language"<>?;
 <==========> op-ge.hrx
